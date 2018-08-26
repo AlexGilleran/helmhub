@@ -4,9 +4,11 @@ import firebaseAdmin from "firebase-admin";
 import firebase from "firebase";
 import fs from "fs";
 import Configstore from "configstore";
+import rimraf from "rimraf";
 
 import firebaseConfig from "../config/firebase-config";
 import unfirebase from "../util/un-firebase";
+import { spawnSync } from "child_process";
 
 export default function addLogin(
   program: CommanderStatic,
@@ -18,24 +20,30 @@ export default function addLogin(
     .description("Publish chart to helmhub")
     .action(async () => {
       console.info("Publishing");
+      const tempDir = fs.mkdtempSync("helmhub");
 
       try {
-        await unfirebase(
-          firebase.auth().signInWithCustomToken(config.get("token"))
+        // const credential = await unfirebase(
+        //   firebase.auth().signInWithCustomToken(config.get("token"))
+        // );
+
+        const packageResult = spawnSync(
+          "helm",
+          ["package", ".", "-d", tempDir],
+          {
+            stdio: "inherit"
+          }
         );
 
-        const result = await unfirebase(
-          firebase
-            .firestore()
-            .doc("/users/1")
-            .set({
-              foo: "bar"
-            })
-				);
-				
-				
+        console.log(packageResult.error);
+
+        const tgz = fs.readdirSync(tempDir)[0];
+
+        console.log(tgz);
       } catch (e) {
         console.error(e);
+      } finally {
+        rimraf.sync(tempDir);
       }
     });
 }

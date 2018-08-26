@@ -8,11 +8,13 @@
   "license": "Apache 2.0",
   "private": false,
   "dependencies": {
+    "@types/rimraf": "^2.0.2",
     "commander": "^2.17.1",
     "configstore": "^4.0.0",
     "firebase": "^5.4.1",
     "firebase-admin": "^6.0.0",
-    "inquirer": "^6.2.0"
+    "inquirer": "^6.2.0",
+    "rimraf": "^2.6.2"
   },
   "devDependencies": {
     "@types/commander": "^2.12.2",
@@ -23,6 +25,7 @@
     "typescript": "^3.0.1"
   },
   "scripts": {
-    "dev": "ts-node src/index.ts"
+    "dev": "ts-node src/index.ts",
+    "build": "./node_modules/.bin/tsc"
   }
 }
