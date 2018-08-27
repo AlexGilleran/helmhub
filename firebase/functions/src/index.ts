@@ -4,6 +4,7 @@ import * as firebase from "firebase";
 import * as express from "express";
 
 import login from "./functions/login";
+import publish from "./functions/publish";
 
 const config = functions.config().firebase || {
   apiKey: "AIzaSyBT-5Y2tN8Z-3Kej12RxbqPd3ThyLvYAw8",
@@ -42,6 +43,7 @@ exports.deleteUserFromDatabase = functions.auth.user().onDelete(event => {
     });
 });
 exports.login = functions.https.onRequest(login(config, express()));
+exports.publish = functions.https.onRequest(publish(config, express()));
 
 // function buildAuthExpress() {
 //   const app = express();

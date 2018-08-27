@@ -1584,7 +1584,7 @@ expand-brackets@^2.1.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
-express-multipart-file-parser@^0.1.1:
+express-multipart-file-parser@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/express-multipart-file-parser/-/express-multipart-file-parser-0.1.2.tgz#c11caccd67feedeb9e61a051c1d64ac9e11b2666"
   dependencies:

@@ -47,23 +47,29 @@ export default function addLogin(
           password: string;
         };
 
-        const response = await fetch(
-          "http://localhost:5000/helmhub-dev/us-central1/login",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              email,
-              password
-            }),
-            headers: {
-              "Content-Type": "application/json"
-            }
-          }
-        ).then(res => res.json());
+        // const response = await fetch(
+        //   "http://localhost:5000/helmhub-dev/us-central1/login",
+        //   {
+        //     method: "POST",
+        //     body: JSON.stringify({
+        //       email,
+        //       password
+        //     }),
+        //     headers: {
+        //       "Content-Type": "application/json"
+        //     }
+        //   }
+        // ).then(res => res.json());
 
-        const token = response.token;
+        // const token = response.token;
 
-				config.set("token", token);
+        const result = await unfirebase(
+          firebase.auth().signInWithEmailAndPassword(email, password)
+        );
+
+        const idToken = await unfirebase(result.user.getIdToken());
+
+        config.set("token", idToken);
       } catch (e) {
         console.error(e);
       }
