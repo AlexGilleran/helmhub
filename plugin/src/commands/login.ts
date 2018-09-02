@@ -4,6 +4,7 @@ import firebaseAdmin from "firebase-admin";
 import firebase from "firebase";
 import fs from "fs";
 import Configstore from "configstore";
+import fetch from "node-fetch";
 
 import FirebaseAuth from "../external/firebase-auth";
 import firebaseConfig from "../config/firebase-config";
@@ -47,29 +48,35 @@ export default function addLogin(
           password: string;
         };
 
-        // const response = await fetch(
-        //   "http://localhost:5000/helmhub-dev/us-central1/login",
-        //   {
-        //     method: "POST",
-        //     body: JSON.stringify({
-        //       email,
-        //       password
-        //     }),
-        //     headers: {
-        //       "Content-Type": "application/json"
-        //     }
-        //   }
-        // ).then(res => res.json());
-
-        // const token = response.token;
-
-        const result = await unfirebase(
-          firebase.auth().signInWithEmailAndPassword(email, password)
+        const response = await fetch(
+          "http://localhost:5000/helmhub-dev/us-central1/login",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email,
+              password
+            }),
+            headers: {
+              "Content-Type": "application/json"
+            }
+          }
         );
 
-        const idToken = await unfirebase(result.user.getIdToken());
+        const responseJson = await response.json();
 
-        config.set("token", idToken);
+        if (response.status !== 200) {
+          console.log(`Failed to login: ${responseJson.error}`);
+        }
+
+        const token = responseJson.refreshToken;
+
+        // const result = await unfirebase(
+        //   firebase.auth().signInWithEmailAndPassword(email, password)
+        // );
+
+        // const idToken = await unfirebase(result.user.getIdToken());
+
+        config.set("token", token);
       } catch (e) {
         console.error(e);
       }

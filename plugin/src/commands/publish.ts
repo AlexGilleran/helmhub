@@ -31,6 +31,7 @@ export default function addLogin(
         // );
 
         // firebase.auth().signIn
+        console.log(config.get("token"));
 
         const packageResult = spawnSync(
           "helm",
@@ -40,7 +41,7 @@ export default function addLogin(
           }
         );
 
-        const tgz = fs.readdirSync(tempDir)[0];
+        const tgz = path.join(tempDir, fs.readdirSync(tempDir)[0]);
 
         const stats = fs.statSync(tgz);
         const tgzStream = fs.createReadStream(tgz);
@@ -61,15 +62,21 @@ export default function addLogin(
 
         if (
           res.status === 403 &&
-          (await res.text()) == "auth/id-token-revoked"
+          (await res.json()).code === "auth/argument-error"
         ) {
           console.error(
             "Your id token has been revoked, please run helm hub login again"
           );
           return;
-        } else {
-          console.log("Uploaded " + tgz);
+        } else if (res.status !== 200) {
+          throw new Error(res.statusText);
         }
+
+        const resJson = await res.json();
+
+        config.set("token", res.headers.get("bearer"));
+
+        console.log("Successfully uploaded " + tgz);
       } catch (e) {
         console.error(e);
       } finally {

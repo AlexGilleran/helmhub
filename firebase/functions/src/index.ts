@@ -3,17 +3,9 @@ import * as firebaseAdmin from "firebase-admin";
 import * as firebase from "firebase";
 import * as express from "express";
 
+import config from "./config";
 import login from "./functions/login";
 import publish from "./functions/publish";
-
-const config = functions.config().firebase || {
-  apiKey: "AIzaSyBT-5Y2tN8Z-3Kej12RxbqPd3ThyLvYAw8",
-  authDomain: "helmhub-dev.firebaseapp.com",
-  databaseURL: "https://helmhub-dev.firebaseio.com",
-  projectId: "helmhub-dev",
-  storageBucket: "helmhub-dev.appspot.com",
-  messagingSenderId: "436272688363"
-};
 
 firebase.initializeApp(config);
 firebaseAdmin.initializeApp(config);
