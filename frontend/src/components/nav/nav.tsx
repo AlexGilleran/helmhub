@@ -11,6 +11,7 @@ const heightXs = "3em";
 
 const Root = styled.div`
   height: ${heightXs};
+  margin-bottom: 2em;
 
   ${media.sm`
 		height: 4.5em;
@@ -208,24 +209,23 @@ export default class Nav extends React.Component {
                   <Link prefetch href={`${baseUrl}?page=product`} as={baseUrl}>
                     <LogoLink href={"/" + baseUrl}>
                       <Logo
-                        foregroundColor={this.props.foregroundColor}
-                        {...logo}
+                        foregroundColor="#FFF"
+                        contents={`<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 77.864" enable-background="new 0 0 100 77.864" xml:space="preserve"><path fill="#010101" d="M93.209,62.333l0.537-0.187l0.369-1.257c0,0-13.978,5.978-43.634,5.978
+												c-29.677,0-45.819-11.977-45.819-11.977l0.444,1.999c0,0,0.725,0.909,5,3.274c0.629,1.632,1.353,3.072,2.164,4.354
+												c7.167,1.903,21.235,4.354,39.749,4.354C69.714,68.871,87.043,64.241,93.209,62.333z"></path><path fill="#010101" d="M52.018,69.775c-19.864,0-33.399-2.812-39.471-4.352c2.537,4.165,5.628,6.978,7.352,8.444
+												c2.444,1.905,6.35,3.981,7.625,3.981c2.888,0.091,58.147-0.263,58.147-0.263l2.632-4.628l4.184-9.531
+												C85.767,65.423,69.067,69.775,52.018,69.775z"></path><path fill="#010101" d="M21.992,55.262c0,0-0.907-29.934,22.048-55.262c11.422,13.978,21.586,24.511,21.586,24.511l0.537,35.658
+												L21.992,55.262z"></path><path fill="#010101" d="M58.739,3.185h-1.093L57.37,14.608c0.721,0.906,1.276,1.46,1.908,2.278L58.739,3.185z"></path><path fill="#010101" d="M17.712,54.354L0.198,52.541c0,0-2.536-16.699,10.533-29.305c4.815,7.536,6.534,10.701,6.534,10.701
+												L17.712,54.354z"></path><path fill="#010101" d="M14.271,22.418h-0.278l-0.093,4.889c0.185,0.185,0.278,0.37,0.371,0.554V22.418z"></path><path fill="#010101" d="M59.811,60.333l-3.259-0.351v5.975c1.095,0,2.259-0.09,3.352-0.181L59.811,60.333z"></path><path fill="#010101" d="M35.855,61.147h-9.607v1.908c2.906,0.835,6.165,1.462,9.607,1.999V61.147z"></path><path fill="#010101" d="M14.64,54.632l-1.091-0.093v4.258c0.351,0.181,0.722,0.369,1.091,0.463V54.632z"></path><path fill="#010101" d="M69.251,60.164c0,0-1.812-29.137,9.351-44.28c10.35,7.884,18.956,14.792,18.956,14.792L100,56.167
+												L69.251,60.164z"></path><path fill="#010101" d="M86.671,58.702l-1.369,0.187l-0.534,3.997c0.534-0.09,0.999-0.184,1.462-0.276L86.671,58.702z"></path><path fill="#010101" d="M91.21,16.975h-0.372l-0.906,6.979c0.184,0.093,0.279,0.186,0.463,0.28L91.21,16.975z"></path></svg>`}
                       />
                       <LogoTitle foregroundColor={this.props.foregroundColor}>
-                        {logo.showText ? this.props.title : ""}
+                        HelmHub
                       </LogoTitle>
                     </LogoLink>
                   </Link>
 
                   {this.props.children}
-
-                  <If condition={pages && pages.length > 1}>
-                    <Hamburger onClick={this.onHamburgerClick.bind(this)}>
-                      <IconBar color={this.props.foregroundColor} />
-                      <IconBar color={this.props.foregroundColor} />
-                      <IconBar color={this.props.foregroundColor} />
-                    </Hamburger>
-                  </If>
                 </TopRow>
 
                 <If

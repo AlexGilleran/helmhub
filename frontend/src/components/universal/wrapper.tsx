@@ -120,19 +120,8 @@ export default class Wrapper extends React.Component {
             </If>
           </Head>
           <Root className={this.props.className}>
-            <Nav
-              logo={{
-                smUrl: "/static/common/images/logo-side-2.svg",
-                url: "/static/common/images/logo-no-text.svg"
-              }}
-              backgroundColor={colors.primary}
-              fluid={true}
-            >
+            <Nav backgroundColor={colors.primary} fluid={true}>
               <RightDock>
-                <SmOnly>BETA</SmOnly>
-                <If condition={props.progress}>
-                  <UserProgress progress={props.progress} />
-                </If>
                 <IconButton
                   iconStyle={{ width: "36px", height: "36px" }}
                   style={{ width: "75px", height: "75px" }}
