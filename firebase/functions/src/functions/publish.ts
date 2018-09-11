@@ -98,6 +98,8 @@ export default function publish(
 
         const doc = firebaseAdmin
           .firestore()
+          .collection("users")
+          .doc(refreshTokenJson.user_id)
           .collection("charts")
           .doc(chartYaml.name)
           .collection("versions")
