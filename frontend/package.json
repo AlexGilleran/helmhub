@@ -1,6 +1,7 @@
 {
   "name": "nichetester-editor",
   "dependencies": {
+    "@material-ui/core": "^3.0.3",
     "babel-runtime": "^6.23.0",
     "bowser": "^1.9.3",
     "classnames": "^2.2.5",
@@ -13,7 +14,8 @@
     "fs": "^0.0.1-security",
     "isomorphic-fetch": "^2.2.1",
     "isomorphic-form-data": "^1.0.0",
-    "lodash": "^4.17.4",
+    "js-yaml": "^3.12.0",
+    "lodash": "^4.17.11",
     "material-expansion-panel": "^1.0.0",
     "material-ui": "^0.20.0",
     "material-ui-number-input": "^5.0.24",
@@ -35,6 +37,9 @@
     "webpack-bundle-analyzer": "^2.13.1"
   },
   "devDependencies": {
+    "@material-ui/codemod": "^1.1.0",
+    "@types/js-yaml": "^3.11.2",
+    "@types/lodash": "^4.14.116",
     "@types/material-ui": "^0.21.5",
     "@types/next": "^6.1.4",
     "@types/react": "^16.4.13",
@@ -50,7 +55,7 @@
   "scripts": {
     "now-build": "echo DID NOT BUILD BUILD LOCALLY",
     "build": "NODE_ENV=production next build && tsc --project tsconfig.server.json",
-    "dev": "nodemon server/dev.ts"
+    "dev": "nodemon server/index.ts"
   },
   "private": true
 }

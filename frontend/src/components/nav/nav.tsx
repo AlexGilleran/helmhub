@@ -1,11 +1,11 @@
 import React from "react";
 import Link from "next/link";
 import styled from "styled-components";
-import classNames from "classnames";
 
 import { Row, Col, Container, ContainerFluid, media } from "../grid";
 import routerEvents from "../../util/router-events";
 import SvgIcon from "../common/svg-icon";
+import Buttons from "./buttons";
 
 const heightXs = "3em";
 
@@ -102,24 +102,9 @@ const NavList = styled(NavListBase)`
 	`};
 `;
 
-const NavItem = styled.li`
-  display: block;
-  width: 100%;
-`;
-
-const NavLink = styled.a`
-  text-decoration: none;
-  color: ${props => props.color || "#FFF"};
-  font-size: 1em;
-  display: block;
-  padding: 1em;
-  margin-top: 4px;
-  white-space: nowrap;
-`;
-
 const TopRow = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   width: 100%;
   height: ${heightXs};
@@ -127,6 +112,13 @@ const TopRow = styled.div`
   ${media.sm`
 		height: 4.5em;
 	`};
+`;
+
+const TagLine = styled.div`
+  color: #fff;
+  margin-left: 1em;
+  font-style: italic;
+  opacity: 0.8;
 `;
 
 const Hamburger = styled.button`
@@ -224,46 +216,14 @@ export default class Nav extends React.Component {
                       </LogoTitle>
                     </LogoLink>
                   </Link>
+                  <TagLine>The easiest way to publish helm charts</TagLine>
 
                   {this.props.children}
                 </TopRow>
 
-                <If
-                  condition={
-                    (pages && pages.length > 1) ||
-                    (this.props.extraLinks && this.props.extraLinks.length > 0)
-                  }
-                >
-                  <NavList open={this.state.menuOpen}>
-                    <For each="page" of={pages}>
-                      <NavItem key={page.path}>
-                        <Link
-                          prefetch
-                          href={`${baseUrl}?page=${page.id}`}
-                          as={baseUrl + extraSlash + page.path}
-                        >
-                          <NavLink
-                            href={baseUrl + extraSlash + page.path}
-                            color={this.props.foregroundColor}
-                          >
-                            {page.title}
-                          </NavLink>
-                        </Link>
-                      </NavItem>
-                    </For>
-
-                    <For each="extraLink" of={this.props.extraLinks || []}>
-                      <NavItem key={extraLink.url}>
-                        <NavLink
-                          href={extraLink.url}
-                          color={this.props.foregroundColor}
-                        >
-                          {extraLink.linkCaption}
-                        </NavLink>
-                      </NavItem>
-                    </For>
-                  </NavList>
-                </If>
+                <NavList open={this.state.menuOpen}>
+                  <Buttons />
+                </NavList>
               </NavCol>
             </Row>
           </ContainerComponent>

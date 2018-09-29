@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { Card, CardActions, CardHeader, CardText } from "material-ui/Card";
 import RaisedButton from "material-ui/RaisedButton";
 
-import { Row, Col, media } from "../../common/components/grid";
+import { Row, Col, media } from "../grid";
 import LoginComponent from "./login";
 import Wrapper from "../universal/wrapper";
 
@@ -23,7 +23,7 @@ const Footer = styled.p`
 
 export default class Login extends React.Component {
   onSignIn() {
-    Router.push("/create/brand/name");
+    Router.push("/");
   }
 
   render() {

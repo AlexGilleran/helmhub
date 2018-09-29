@@ -10,7 +10,6 @@ import { media } from "../../components/grid";
 import { colors } from "../../variables";
 import Nav from "../nav/nav";
 import ThemeProvider from "../theme-provider";
-import Menu from "./menu";
 import routerEvents from "../../util/router-events";
 import env from "../../config/environment";
 
@@ -54,31 +53,7 @@ const SmOnly = styled.span`
 	`};
 `;
 
-function UserProgress({ progress }) {
-  const pc = Math.round(
-    (progress.current / (progress.max - progress.min)) * 100
-  );
-
-  return (
-    <ProgressWrapper>
-      <ProgressBar
-        mode="determinate"
-        min={0}
-        max={100}
-        value={pc}
-        color={"#FFF"}
-      />
-      <ProgressText>{pc}%</ProgressText>
-      <SmOnly> complete</SmOnly>
-    </ProgressWrapper>
-  );
-}
-
 export default class Wrapper extends React.Component {
-  state = {
-    menuOpen: false
-  };
-
   componentWillMount() {
     if (typeof window !== "undefined") {
       const ua = isDev ? "UA-000000-01" : "UA-96743066-4";
@@ -106,8 +81,6 @@ export default class Wrapper extends React.Component {
     }, 200);
   };
 
-  setMenuOpen = menuOpen => this.setState({ menuOpen });
-
   render() {
     const props = this.props;
 
@@ -120,23 +93,8 @@ export default class Wrapper extends React.Component {
             </If>
           </Head>
           <Root className={this.props.className}>
-            <Nav backgroundColor={colors.primary} fluid={true}>
-              <RightDock>
-                <IconButton
-                  iconStyle={{ width: "36px", height: "36px" }}
-                  style={{ width: "75px", height: "75px" }}
-                  tooltip="Menu"
-                  onClick={() => this.setMenuOpen(true)}
-                >
-                  <MenuIcon color="#FFF" />
-                </IconButton>
-              </RightDock>
-            </Nav>
+            <Nav backgroundColor={colors.primary} fluid={true} />
             {props.children}
-            <Menu
-              open={this.state.menuOpen}
-              onRequestChange={this.setMenuOpen}
-            />
           </Root>
         </React.Fragment>
       </ThemeProvider>

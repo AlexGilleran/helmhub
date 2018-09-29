@@ -9,7 +9,6 @@ import * as fs from "fs";
 import { File as GSFile } from "@google-cloud/storage";
 import * as yaml from "js-yaml";
 import * as rimraf from "rimraf";
-import { encodeForFirebase } from "../util/firebase-encoding";
 const gunzip = require("gunzip-maybe");
 
 type RefreshTokenPayload = {
@@ -88,24 +87,29 @@ export default function publish(
 
         const cloudFilePath = `/users/${
           refreshTokenJson.user_id
-        }/${originalname}`;
+        }/charts/${originalname}`;
 
         const cloudFile = bucket.file(cloudFilePath);
-
         await cloudFile.save(reqFile);
 
-        const { chartYaml } = await getChartMetadata(cloudFile);
+        const chartMetadata = await getChartMetadata(cloudFile);
 
-        const doc = firebaseAdmin
+        const chartDoc = firebaseAdmin
           .firestore()
           .collection("users")
           .doc(refreshTokenJson.user_id)
           .collection("charts")
-          .doc(chartYaml.name)
-          .collection("versions")
-          .doc(chartYaml.version);
+          .doc(chartMetadata.chartYaml.name);
 
-        doc.set({ chartYaml, path: cloudFilePath });
+        await chartDoc.set({
+          makeFirebaseWork: true
+        });
+
+        const doc = chartDoc
+          .collection("versions")
+          .doc(chartMetadata.chartYaml.version);
+
+        doc.set({ ...chartMetadata, path: cloudFilePath });
 
         res
           .header("bearer", refreshTokenJson.refresh_token)
@@ -151,12 +155,81 @@ type ChartYaml = {
 
 type ChartMetadata = {
   chartYaml: ChartYaml;
+  readme: string;
 };
+const isFile = (filename: string) => (filePath: string) =>
+  filePath.toLowerCase().indexOf(filename.toLowerCase()) !== -1;
 
-// const filesWeNeed = ["Chart.yaml", "LICENSE", "README.md", "requirements.md"];
+const isChartYaml = isFile("chart.yaml");
+const isReadmeMd = isFile("readme.md");
 
 async function getChartMetadata(cloudFile: GSFile): Promise<ChartMetadata> {
-  const tempDir = await new Promise<string>((resolve, reject) =>
+  const tempDir = await makeTempDir();
+
+  try {
+    await extractGzip(cloudFile, tempDir);
+
+    const tmpDirContents = await getAllPathsInDir(tempDir);
+    const chartDirContents = await getAllPathsInDir(tmpDirContents[0]);
+
+    const yamlFilePath = chartDirContents.find(isChartYaml);
+    const readmeFilePath = chartDirContents.find(isReadmeMd);
+
+    if (!yamlFilePath) {
+      throw new Error("Could not find chart yaml in uploaded .tar.gz");
+    }
+
+    const yamlPromise = fileToString(yamlFilePath);
+    const readmePromise = readmeFilePath
+      ? fileToString(readmeFilePath)
+      : Promise.resolve(undefined);
+
+    const [yamlString, readMeString] = await Promise.all([
+      yamlPromise,
+      readmePromise
+    ]);
+
+    return {
+      chartYaml: yaml.safeLoad(yamlString),
+      readme: readMeString
+    };
+  } finally {
+    await rmrf(tempDir);
+  }
+}
+
+function extractGzip(fromGSFile: GSFile, toPath: string) {
+  return new Promise((resolve, reject) => {
+    const tarExtractor = tar.extract(toPath, {
+      ignore: (name: string) => !(isChartYaml(name) || isReadmeMd(name))
+    });
+
+    fromGSFile
+      .createReadStream()
+      .pipe(gunzip())
+      .pipe(tarExtractor)
+      .on("error", e => reject(e));
+
+    tarExtractor.on("finish", () => {
+      resolve();
+    });
+  });
+}
+
+function fileToString(filePath: string): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    fs.readFile(filePath, "utf-8", (err, string) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(string);
+      }
+    });
+  });
+}
+
+function makeTempDir() {
+  return new Promise<string>((resolve, reject) =>
     fs.mkdtemp("/tmp/helmhub", (err, dir) => {
       if (err) {
         reject(err);
@@ -165,56 +238,6 @@ async function getChartMetadata(cloudFile: GSFile): Promise<ChartMetadata> {
       }
     })
   );
-
-  try {
-    await new Promise((resolve, reject) => {
-      const tarExtractor = tar.extract(tempDir, {
-        ignore: (name: string) => {
-          const lowerCaseName = name.toLowerCase();
-          return lowerCaseName.indexOf("chart.yaml") === -1;
-        }
-      });
-
-      cloudFile
-        .createReadStream()
-        .pipe(gunzip())
-        .pipe(tarExtractor)
-        .on("error", e => reject(e));
-
-      tarExtractor.on("finish", () => {
-        resolve();
-      });
-    });
-
-    const tmpDirContents = await getAllPathsInDir(tempDir);
-    const chartDirContents = await getAllPathsInDir(tmpDirContents[0]);
-
-    const yamlFilePath = chartDirContents.sort((a, b) => {
-      if (a > b) {
-        return 1;
-      } else if (b > a) {
-        return -1;
-      } else {
-        return 0;
-      }
-    })[0];
-
-    const yamlString = await new Promise<string>((resolve, reject) => {
-      fs.readFile(yamlFilePath, "utf-8", (err, string) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(string);
-        }
-      });
-    });
-
-    return {
-      chartYaml: yaml.safeLoad(yamlString)
-    };
-  } finally {
-    await rmrf(tempDir);
-  }
 }
 
 function getAllPathsInDir(dirPath: string): Promise<string[]> {

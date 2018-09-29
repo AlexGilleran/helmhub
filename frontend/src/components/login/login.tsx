@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 import base, { firebase, auth } from "../../config/base";
-import { isServer } from "../../common/util/flags";
+import isServer from "../../util/is-server";
 
 let authUi = null;
 if (!isServer) {
@@ -31,10 +31,7 @@ export default class Login extends React.Component {
           return false;
         }
       },
-      signInOptions: [
-        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-        firebase.auth.EmailAuthProvider.PROVIDER_ID
-      ]
+      signInOptions: [firebase.auth.EmailAuthProvider.PROVIDER_ID]
     };
     authUi && authUi.start("#firebaseui-auth", uiConfig);
   }
