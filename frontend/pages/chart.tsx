@@ -96,8 +96,7 @@ export default class Chart extends React.Component<{
                   </Typography>
                   <Code>
                     <Line>
-                      helm repo add {this.props.username} helmhub.com/
-                      {this.props.username}
+                      helm repo add {this.props.username} https://helmhub.com/charts/{this.props.username}
                     </Line>
 
                     <Line>

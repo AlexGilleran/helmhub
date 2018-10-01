@@ -31,7 +31,7 @@ export default function OuterAuthHoc(
       }
     }
 
-    componentWillMount() {
+    componentDidMount() {
       this.unsubscribe = auth.onAuthStateChanged(user => {
         if (!this.unmounted) {
           if (user) {

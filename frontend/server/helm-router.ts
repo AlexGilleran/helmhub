@@ -24,9 +24,11 @@ router.get("/charts/:username/index.yaml", async (req, res) => {
           .getMetadata();
 
         return {
-          [version.name]: {
-            [version.version]: {
+          [version.name]: [
+            {
+              apiVersion: "v1",
               name: version.name,
+              version: version.version,
               description: version.description,
               home: version.home,
               sources: version.sources,
@@ -37,7 +39,7 @@ router.get("/charts/:username/index.yaml", async (req, res) => {
                 )
               ]
             }
-          }
+          ]
         };
       })
   );
