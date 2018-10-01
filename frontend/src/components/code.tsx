@@ -26,7 +26,7 @@ const Prompt = styled.span`
 function Line(props) {
   return (
     <StyledLineP>
-      <Prompt>$></Prompt> {props.children}
+      <Prompt>$> </Prompt>{props.children}
     </StyledLineP>
   );
 }

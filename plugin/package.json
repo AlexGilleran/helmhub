@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": "https://helmhub.com",
   "author": "Alex Gilleran",
-  "license": "Apache 2.0",
+  "license": "AGPLv3",
   "private": false,
   "dependencies": {
     "@types/rimraf": "^2.0.2",
