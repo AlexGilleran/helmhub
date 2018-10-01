@@ -3,8 +3,8 @@ import React from "react";
 import Router from "next/router";
 import Link from "next/link";
 import styled from "styled-components";
-import { Card, CardActions, CardHeader, CardText } from "material-ui/Card";
-import RaisedButton from "material-ui/RaisedButton";
+
+import Button from "@material-ui/core/Button";
 
 import { Row, Col, media } from "../grid";
 import LoginComponent from "./login";
@@ -13,7 +13,7 @@ import Wrapper from "../universal/wrapper";
 const DescriptionCol = styled(Col)`
   text-align: center;
 `;
-const AlternativeButton = styled(RaisedButton)`
+const AlternativeButton = styled(Button)`
   margin-top: 1em;
 `;
 
@@ -35,10 +35,9 @@ export default class Login extends React.Component {
             {this.props.explanation}
             <LoginComponent onSignIn={this.onSignIn.bind(this)} />
             <Link href={this.props.alternativeRoute} passHref={true}>
-              <AlternativeButton
-                secondary={true}
-                label={this.props.alternativeCaption}
-              />
+              <AlternativeButton variant="contained" color="secondary">
+                {this.props.alternativeCaption}
+              </AlternativeButton>
             </Link>
             <Footer>
               <Link href="/privacy" passHref={true}>

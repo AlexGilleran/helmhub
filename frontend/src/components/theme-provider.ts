@@ -1,20 +1,17 @@
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
-import getMuiTheme from "material-ui/styles/getMuiTheme";
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
 import { colors } from "../variables";
 
-export default function ThemeProvider({ children }) {
-  return (
-    <MuiThemeProvider
-      muiTheme={getMuiTheme({
-        palette: {
-          primary1Color: colors.primary,
-          accent1Color: colors.secondary
-        },
-        userAgent: "all"
-      })}
-    >
-      {children}
-    </MuiThemeProvider>
-  );
+const theme = createMuiTheme({
+  palette: {
+    primary: { main: colors.primary },
+    secondary: { main: colors.secondary }
+  },
+  typography: {
+    fontSize: 18
+  }
+});
+
+export default function ThemeProvider(props) {
+  return <MuiThemeProvider theme={theme}>{props.children}</MuiThemeProvider>;
 }
