@@ -6,6 +6,7 @@ import * as express from "express";
 import config from "./config";
 import login from "./functions/login";
 import publish from "./functions/publish";
+import crawl from "./functions/crawl";
 
 firebase.initializeApp(config);
 firebaseAdmin.initializeApp(config);
@@ -34,8 +35,12 @@ exports.deleteUserFromDatabase = functions.auth.user().onDelete(event => {
       throw e;
     });
 });
+
 exports.login = functions.https.onRequest(login(config, express()));
+
 exports.publish = functions.https.onRequest(publish(config, express()));
+
+exports.crawl = functions.https.onRequest(crawl(express()));
 
 // function buildAuthExpress() {
 //   const app = express();

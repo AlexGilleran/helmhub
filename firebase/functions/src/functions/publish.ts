@@ -1,5 +1,4 @@
 import * as express from "express";
-// import * as firebase from "firebase";
 import * as firebaseAdmin from "firebase-admin";
 import { fileParser } from "express-multipart-file-parser";
 import fetch from "node-fetch";
@@ -9,6 +8,7 @@ import * as fs from "fs";
 import { File as GSFile } from "@google-cloud/storage";
 import * as yaml from "js-yaml";
 import * as rimraf from "rimraf";
+import { ChartMetadata } from "../model";
 const gunzip = require("gunzip-maybe");
 
 type RefreshTokenPayload = {
@@ -109,7 +109,7 @@ export default function publish(
           .collection("versions")
           .doc(chartMetadata.chartYaml.version);
 
-        doc.set({ ...chartMetadata, path: cloudFilePath });
+        doc.set(chartMetadata);
 
         res
           .header("bearer", refreshTokenJson.refresh_token)
@@ -132,31 +132,6 @@ export default function publish(
   return app;
 }
 
-type ChartYaml = {
-  apiVersion: string;
-  name: string;
-  version: string;
-  kubeVersion?: string;
-  description?: string;
-  keywords?: string[];
-  home?: string;
-  sources?: string;
-  maintainers?: {
-    name: string;
-    email: string;
-    url: string;
-  }[];
-  engine?: string;
-  icon?: string;
-  appVersion?: string;
-  deprecated?: boolean;
-  tillerVersion?: string;
-};
-
-type ChartMetadata = {
-  chartYaml: ChartYaml;
-  readme: string;
-};
 const isFile = (filename: string) => (filePath: string) =>
   filePath.toLowerCase().indexOf(filename.toLowerCase()) !== -1;
 
@@ -189,9 +164,18 @@ async function getChartMetadata(cloudFile: GSFile): Promise<ChartMetadata> {
       readmePromise
     ]);
 
+    const [fileMetadata] = await cloudFile.getMetadata();
+
     return {
       chartYaml: yaml.safeLoad(yamlString),
-      readme: readMeString
+      readme: readMeString,
+      gsFilePath: fileMetadata.selfLink,
+      urls: [
+        fileMetadata.mediaLink.replace(
+          "https://www.googleapis.com/download/storage/v1/",
+          "https://firebasestorage.googleapis.com/v0/"
+        )
+      ]
     };
   } finally {
     await rmrf(tempDir);

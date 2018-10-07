@@ -21,6 +21,10 @@ const ReadmeCard = styled(Card as any)`
   margin-top: 1em;
 `;
 
+const ExternalRepoDisclaimer = styled.p`
+  font-size: 0.8em;
+`;
+
 export default class Chart extends React.Component<{
   chartYaml: any;
   username: string;
@@ -38,6 +42,7 @@ export default class Chart extends React.Component<{
 
   render() {
     const chartYaml = this.props.chartYaml;
+    const isStable = this.props.username === "stable";
 
     return (
       <Wrapper>
@@ -77,6 +82,16 @@ export default class Chart extends React.Component<{
                       </a>
                     ))}
                   </p>
+
+                  {isStable && (
+                    <ExternalRepoDisclaimer>
+                      This is imported from the{" "}
+                      <a href="https://github.com/helm/charts/tree/master/stable">
+                        stable
+                      </a>{" "}
+                      repository and is not hosted by HelmHub
+                    </ExternalRepoDisclaimer>
+                  )}
                 </CardContent>
               </Card>
               <ReadmeCard>
@@ -95,12 +110,17 @@ export default class Chart extends React.Component<{
                     To install
                   </Typography>
                   <Code>
-                    <Line>
-                      helm repo add {this.props.username} https://helmhub.com/charts/{this.props.username}
-                    </Line>
+                    {!isStable && (
+                      <Line>
+                        helm repo add {this.props.username}{" "}
+                        {"https://helmhub.com/charts/"}
+                        {this.props.username}
+                      </Line>
+                    )}
 
                     <Line>
-                      helm install {this.props.username}/{chartYaml.name}
+                      helm install {isStable ? "" : this.props.username + "?"}
+                      {chartYaml.name}
                     </Line>
                   </Code>
                 </CardContent>

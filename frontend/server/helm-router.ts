@@ -17,12 +17,6 @@ router.get("/charts/:username/index.yaml", async (req, res) => {
     charts,
     async chart =>
       await mapValues(chart, async version => {
-        const [fileMetadata] = await firebaseAdmin
-          .storage()
-          .bucket(firebaseConfig.storageBucket)
-          .file(`/users/${uid}/charts/${version.name}-${version.version}.tgz`)
-          .getMetadata();
-
         return {
           [version.name]: [
             {
@@ -32,12 +26,7 @@ router.get("/charts/:username/index.yaml", async (req, res) => {
               description: version.description,
               home: version.home,
               sources: version.sources,
-              urls: [
-                fileMetadata.mediaLink.replace(
-                  "https://www.googleapis.com/download/storage/v1/",
-                  "https://firebasestorage.googleapis.com/v0/"
-                )
-              ]
+              urls: version.urls
             }
           ]
         };
